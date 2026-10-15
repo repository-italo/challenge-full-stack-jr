@@ -1,0 +1,26 @@
+{
+    "name": "challenge-backend",
+    "version": "1.0.0",
+    "description": "Challenge to full stack junior developer",
+    "main": "src/server.js",
+    "type": "module",
+    "scripts": {
+        "load:db": "docker compose --env-file .env up",
+        "start": "tsx watch --env-file=.env src/server.ts"
+    },
+    "author": "Italo",
+    "license": "ISC",
+    "dependencies": {
+        "express": "^5.3.0",
+        "mysql2": "^3.24.6",
+        "sequelize": "^6.37.8",
+        "zod": "^4.6.7"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.6",
+        "@types/node": "^26.6.5",
+        "sequelize-cli": "^6.6.5",
+        "tsx": "^4.23.15",
+        "typescript": "^7.0.2"
+    }
+}

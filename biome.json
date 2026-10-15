@@ -1,0 +1,77 @@
+{
+    "$schema": "https://biomejs.dev/schemas/latest/schema.json",
+    "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+    "files": {
+        "includes": ["**", "!**/dist", "!**/node_modules", "!**/.vscode", "!**/package-lock.json"]
+    },
+    "formatter": {
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 120,
+        "lineEnding": "lf"
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single",
+            "jsxQuoteStyle": "double",
+            "semicolons": "always",
+            "trailingCommas": "all"
+        }
+    },
+    "json": {
+        "formatter": { "indentStyle": "space", "indentWidth": 4 }
+    },
+    "assist": {
+        "actions": { "source": { "organizeImports": "on" } }
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "preset": "all",
+            "correctness": {
+                "noUnusedVariables": "error",
+                "noUnusedImports": "error",
+                "noProcessGlobal": "off"
+            },
+            "suspicious": {
+                "noExplicitAny": "warn"
+            },
+            "style": {
+                "useConst": "error",
+                "useImportType": "error",
+                "noTernary": "off",
+                "noProcessEnv": "off"
+            }
+        }
+    },
+    "overrides": [
+        {
+            "includes": ["backend/**"],
+            "linter": {
+                "rules": {
+                    "suspicious": {
+                        "noConsole": {
+                            "level": "warn",
+                            "options": { "allow": ["warn", "error"] }
+                        }
+                    },
+                    "correctness": {
+                        "useImportExtensions": {
+                            "level": "error",
+                            "options": { "forceJsExtensions": true }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "includes": ["frontend/**"],
+            "linter": {
+                "rules": {
+                    "correctness": { "useExhaustiveDependencies": "error" }
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,26 @@
+{
+    "name": "desafio",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "check": "biome check .",
+        "check:fix": "biome check --write .",
+        "ci": "biome ci ."
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/repository-italo/challenge-full-stack-jr.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/repository-italo/challenge-full-stack-jr/issues"
+    },
+    "homepage": "https://github.com/repository-italo/challenge-full-stack-jr#readme",
+    "devDependencies": {
+        "@biomejs/biome": "2.5.15"
+    }
+}
