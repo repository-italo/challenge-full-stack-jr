@@ -9,7 +9,15 @@ export class ReservaController {
 
     async getAll(_req: Request, res: Response): Promise<void> {
         const reservas = await this.reservaService.getAllReservas();
-        res.status(200).json(reservas);
+        res.status(200).json(
+            reservas.map((reserva) => ({
+                id: reserva.id,
+                id_canil: reserva.id_canil,
+                id_pet: reserva.id_pet,
+                data_entrada: reserva.data_entrada,
+                data_saida: reserva.data_saida,
+            })),
+        );
     }
 
     async getById(_req: Request, res: Response): Promise<void> {
@@ -18,13 +26,25 @@ export class ReservaController {
         if (!reserva) {
             throw new NotFoundError(`Reserva with id ${id} not found`);
         }
-        res.status(200).json(reserva);
+        res.status(200).json({
+            id: reserva.id,
+            id_canil: reserva.id_canil,
+            id_pet: reserva.id_pet,
+            data_entrada: reserva.data_entrada,
+            data_saida: reserva.data_saida,
+        });
     }
 
     async create(_req: Request, res: Response): Promise<void> {
         const data = res.locals.body as CreateReservaRequest;
         const reserva = await this.reservaService.createReserva(data);
-        res.status(201).json(reserva);
+        res.status(201).json({
+            id: reserva.id,
+            id_canil: reserva.id_canil,
+            id_pet: reserva.id_pet,
+            data_entrada: reserva.data_entrada,
+            data_saida: reserva.data_saida,
+        });
     }
 
     async update(_req: Request, res: Response): Promise<void> {
@@ -34,7 +54,13 @@ export class ReservaController {
         if (!reserva) {
             throw new NotFoundError(`Reserva with id ${id} not found`);
         }
-        res.status(200).json(reserva);
+        res.status(200).json({
+            id: reserva.id,
+            id_canil: reserva.id_canil,
+            id_pet: reserva.id_pet,
+            data_entrada: reserva.data_entrada,
+            data_saida: reserva.data_saida,
+        });
     }
 
     async delete(_req: Request, res: Response): Promise<void> {

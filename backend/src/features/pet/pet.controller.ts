@@ -9,7 +9,14 @@ export class PetController {
 
     async getAll(_req: Request, res: Response): Promise<void> {
         const pets = await this.petService.getAllPets();
-        res.status(200).json(pets);
+        res.status(200).json(
+            pets.map((pet) => ({
+                id: pet.id,
+                nome: pet.nome,
+                raca: pet.raca,
+                id_dono: pet.id_dono,
+            })),
+        );
     }
 
     async getById(_req: Request, res: Response): Promise<void> {
@@ -18,13 +25,23 @@ export class PetController {
         if (!pet) {
             throw new NotFoundError(`Pet with id ${id} not found`);
         }
-        res.status(200).json(pet);
+        res.status(200).json({
+            id: pet.id,
+            nome: pet.nome,
+            raca: pet.raca,
+            id_dono: pet.id_dono,
+        });
     }
 
     async create(_req: Request, res: Response): Promise<void> {
         const data = res.locals.body as CreatePetRequest;
         const pet = await this.petService.createPet(data);
-        res.status(201).json(pet);
+        res.status(201).json({
+            id: pet.id,
+            nome: pet.nome,
+            raca: pet.raca,
+            id_dono: pet.id_dono,
+        });
     }
 
     async update(_req: Request, res: Response): Promise<void> {
@@ -34,7 +51,12 @@ export class PetController {
         if (!pet) {
             throw new NotFoundError(`Pet with id ${id} not found`);
         }
-        res.status(200).json(pet);
+        res.status(200).json({
+            id: pet.id,
+            nome: pet.nome,
+            raca: pet.raca,
+            id_dono: pet.id_dono,
+        });
     }
 
     async delete(_req: Request, res: Response): Promise<void> {

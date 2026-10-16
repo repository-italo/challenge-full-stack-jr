@@ -9,40 +9,65 @@ export class DonoController {
 
     async getAll(_req: Request, res: Response): Promise<void> {
         const donos = await this.donoService.getAllDonos();
-        res.status(200).json(donos);
+
+        res.status(200).json(
+            donos.map((dono) => ({
+                id: dono.id,
+                nome: dono.nome,
+                telefone: dono.telefone,
+            })),
+        );
     }
 
     async getById(_req: Request, res: Response): Promise<void> {
         const { id } = res.locals.params as DonoParams;
         const dono = await this.donoService.getDonoById(id);
+
         if (!dono) {
             throw new NotFoundError(`Dono with id ${id} not found`);
         }
-        res.status(200).json(dono);
+
+        res.status(200).json({
+            id: dono.id,
+            nome: dono.nome,
+            telefone: dono.telefone,
+        });
     }
 
     async create(_req: Request, res: Response): Promise<void> {
         const data = res.locals.body as CreateDonoRequest;
         const dono = await this.donoService.createDono(data);
-        res.status(201).json(dono);
+        res.status(201).json({
+            id: dono.id,
+            nome: dono.nome,
+            telefone: dono.telefone,
+        });
     }
 
     async update(_req: Request, res: Response): Promise<void> {
         const { id } = res.locals.params as DonoParams;
         const data = res.locals.body as RemoveUndefined<UpdateDonoRequest>;
         const dono = await this.donoService.updateDono(id, data);
+
         if (!dono) {
             throw new NotFoundError(`Dono with id ${id} not found`);
         }
-        res.status(200).json(dono);
+
+        res.status(200).json({
+            id: dono.id,
+            nome: dono.nome,
+            telefone: dono.telefone,
+        });
     }
 
     async delete(_req: Request, res: Response): Promise<void> {
         const { id } = res.locals.params as DonoParams;
         const deleted = await this.donoService.deleteDono(id);
+
         if (!deleted) {
             throw new NotFoundError(`Dono with id ${id} not found`);
         }
+
         res.status(204).send();
     }
 }
