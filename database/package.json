@@ -1,0 +1,19 @@
+{
+    "name": "database",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "load:db": "docker compose --env-file .env up"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "dependencies": {
+        "dotenv": "^18.0.8",
+        "mysql2": "^3.24.6",
+        "sequelize": "^6.37.8",
+        "sequelize-cli": "^6.6.5"
+    }
+}

@@ -5,7 +5,6 @@
     "main": "src/server.js",
     "type": "module",
     "scripts": {
-        "load:db": "docker compose --env-file .env up",
         "start": "tsx watch --env-file=.env src/server.ts"
     },
     "author": "Italo",

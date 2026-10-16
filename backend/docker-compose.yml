@@ -1,8 +1,0 @@
-services:
-  database_petzin:
-    image: mysql:8
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
-      MYSQL_DATABASE: database_petzin
-    ports:
-      - "${DATABASE_PORT}:3306"
