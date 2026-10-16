@@ -3,6 +3,7 @@ import { createDonoRouter } from './features/dono/dono.routes.js';
 import { createPetRouter } from './features/pet/pet.routes.js';
 import { createReservaRouter } from './features/reserva/reserva.routes.js';
 import { initDatabase } from './integrations/database/index.js';
+import { errorHandler, notFoundHandler } from './shared/middleware/index.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,6 +13,9 @@ app.use(express.json());
 createDonoRouter(app);
 createPetRouter(app);
 createReservaRouter(app);
+
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log(`App working in port ${PORT}`);
