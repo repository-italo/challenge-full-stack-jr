@@ -20,11 +20,26 @@ export class ReservaRepository {
         return ReservaEntity.restore(reserva.toJSON() as ReservaData);
     }
 
+    async findByPetId(petId: number): Promise<ReservaEntity[]> {
+        const reservas = await this.Reserva.findAll({ where: { id_pet: petId } });
+        return reservas.map((reserva) => ReservaEntity.restore(reserva.toJSON() as ReservaData));
+    }
+
+    async findActiveByCanilAndDono(canilId: number, donoId: number): Promise<ReservaEntity[]> {
+        const { Pet } = getCachedModels();
+        const reservas = await this.Reserva.findAll({
+            where: { id_canil: canilId },
+            include: [{ model: Pet, where: { id_dono: donoId } }],
+        });
+        return reservas.map((reserva) => ReservaEntity.restore(reserva.toJSON() as ReservaData));
+    }
+
     async create(data: {
         id_canil: number;
         id_pet: number;
         data_entrada: Date;
         data_saida: Date;
+        valor_total_pago: number;
     }): Promise<ReservaEntity> {
         const reserva = await this.Reserva.create(data);
         return ReservaEntity.restore(reserva.toJSON() as ReservaData);
@@ -32,7 +47,7 @@ export class ReservaRepository {
 
     async update(
         id: number,
-        data: { id_canil?: number; id_pet?: number; data_entrada?: Date; data_saida?: Date },
+        data: { id_canil?: number; id_pet?: number; data_entrada?: Date; data_saida?: Date; valor_total_pago?: number },
     ): Promise<ReservaEntity | null> {
         const reserva = await this.Reserva.findByPk(id);
         if (!reserva) return null;

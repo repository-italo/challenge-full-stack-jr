@@ -3,6 +3,7 @@ import { DataTypes, Model, type Sequelize } from 'sequelize';
 export class Canil extends Model {
     declare id: number;
     declare numero: number;
+    declare valor_diario: number;
     declare createdAt: Date;
     declare updatedAt: Date;
 
@@ -17,6 +18,11 @@ export class Canil extends Model {
                 numero: {
                     type: DataTypes.INTEGER,
                     allowNull: false,
+                },
+                valor_diario: {
+                    type: DataTypes.DECIMAL(10, 2),
+                    allowNull: false,
+                    defaultValue: 0,
                 },
                 createdAt: {
                     type: DataTypes.DATE(3),

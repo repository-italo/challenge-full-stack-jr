@@ -16,6 +16,7 @@ export class ReservaController {
                 id_pet: reserva.id_pet,
                 data_entrada: reserva.data_entrada,
                 data_saida: reserva.data_saida,
+                valor_total_pago: reserva.valor_total_pago,
             })),
         );
     }
@@ -32,6 +33,7 @@ export class ReservaController {
             id_pet: reserva.id_pet,
             data_entrada: reserva.data_entrada,
             data_saida: reserva.data_saida,
+            valor_total_pago: reserva.valor_total_pago,
         });
     }
 
@@ -44,13 +46,14 @@ export class ReservaController {
             id_pet: reserva.id_pet,
             data_entrada: reserva.data_entrada,
             data_saida: reserva.data_saida,
+            valor_total_pago: reserva.valor_total_pago,
         });
     }
 
     async update(_req: Request, res: Response): Promise<void> {
         const { id } = res.locals.params as ReservaParams;
         const data = res.locals.body as RemoveUndefined<UpdateReservaRequest>;
-        const reserva = await this.reservaService.updateReserva(id, data);
+        const reserva = await this.reservaService.updateReserva(id, data as any);
         if (!reserva) {
             throw new NotFoundError(`Reserva with id ${id} not found`);
         }
@@ -60,6 +63,7 @@ export class ReservaController {
             id_pet: reserva.id_pet,
             data_entrada: reserva.data_entrada,
             data_saida: reserva.data_saida,
+            valor_total_pago: reserva.valor_total_pago,
         });
     }
 

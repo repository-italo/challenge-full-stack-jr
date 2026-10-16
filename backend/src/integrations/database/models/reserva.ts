@@ -6,6 +6,7 @@ export class Reserva extends Model {
     declare id_pet: number;
     declare data_entrada: Date;
     declare data_saida: Date;
+    declare valor_total_pago: number;
     declare createdAt: Date;
     declare updatedAt: Date;
 
@@ -32,6 +33,11 @@ export class Reserva extends Model {
                 data_saida: {
                     type: DataTypes.DATE,
                     allowNull: false,
+                },
+                valor_total_pago: {
+                    type: DataTypes.DECIMAL(10, 2),
+                    allowNull: false,
+                    defaultValue: 0,
                 },
                 createdAt: {
                     type: DataTypes.DATE(3),

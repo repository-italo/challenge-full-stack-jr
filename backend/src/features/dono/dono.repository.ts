@@ -14,6 +14,25 @@ export class DonoRepository {
         return donos.map((dono) => DonoEntity.restore(dono.toJSON() as DonoData));
     }
 
+    async findAllWithPets() {
+        const { Pet } = getCachedModels();
+        const donos = await this.Dono.findAll({
+            include: [{ model: Pet, as: 'pet' }],
+        });
+
+        return donos.map((dono) => ({
+            id: dono.id,
+            nome: dono.nome,
+            telefone: dono.telefone,
+            pets: (dono.get('pet') as any[]).map((pet) => ({
+                id: pet.id,
+                nome: pet.nome,
+                raca: pet.raca,
+                id_dono: pet.id_dono,
+            })),
+        }));
+    }
+
     async findById(id: number): Promise<DonoEntity | null> {
         const dono = await this.Dono.findByPk(id);
         if (!dono) return null;

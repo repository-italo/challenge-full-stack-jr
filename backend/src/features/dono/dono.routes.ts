@@ -13,6 +13,7 @@ export function createDonoRouter(app: Express): void {
     const donoController = new DonoController(donoService);
 
     router.get('/', (req, res) => donoController.getAll(req, res));
+    router.get('/with-pets', (req, res) => donoController.getAllWithPets(req, res));
     router.get('/:id', createValidator(donoParamsSchema, 'params'), (req, res) => donoController.getById(req, res));
     router.post('/', createValidator(createDonoSchema, 'body'), (req, res) => donoController.create(req, res));
     router.put(

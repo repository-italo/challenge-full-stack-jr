@@ -8,6 +8,10 @@ export class DonoService {
         return this.donoRepository.findAll();
     }
 
+    async getAllDonosWithPets() {
+        return this.donoRepository.findAllWithPets();
+    }
+
     async getDonoById(id: number): Promise<DonoEntity | null> {
         return this.donoRepository.findById(id);
     }

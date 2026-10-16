@@ -19,6 +19,11 @@ export class DonoController {
         );
     }
 
+    async getAllWithPets(_req: Request, res: Response): Promise<void> {
+        const donosWithPets = await this.donoService.getAllDonosWithPets();
+        res.status(200).json(donosWithPets);
+    }
+
     async getById(_req: Request, res: Response): Promise<void> {
         const { id } = res.locals.params as DonoParams;
         const dono = await this.donoService.getDonoById(id);
