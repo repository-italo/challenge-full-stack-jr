@@ -1,14 +1,15 @@
+import type { CanilRepository } from '../canil/canil.repository.js';
 import { PetRepository } from '../pet/pet.repository.js';
-import { CanilRepository } from '../canil/canil.repository.js';
 import type { ReservaEntity } from './reserva.entity.js';
 import type { ReservaRepository } from './reserva.repository.js';
-import { ReservaValidator } from './reserva.validator.js';
 import type { GetReservasQuerySchema } from './reserva.schemas.js';
+import { ReservaValidator } from './reserva.validator.js';
 
 export class ReservaService {
     private validator: ReservaValidator;
 
     constructor(
+        private readonly petRepository: PetRepository,
         private readonly reservaRepository: ReservaRepository,
         private readonly canilRepository: CanilRepository,
     ) {
@@ -30,8 +31,14 @@ export class ReservaService {
         data_saida: Date;
         valor_total_pago: number;
     }): Promise<ReservaEntity> {
+        const pet = await this.petRepository.findById(data.id_pet);
+
+        if (!pet) {
+            throw new Error(`Pet with id ${data.id_pet} not found`);
+        }
+
         await this.validator.validateNoConflictingReservations(data.id_pet, data.data_entrada, data.data_saida);
-        await this.validator.validateFamilyPetsInCanil(data.id_pet, data.id_canil);
+        await this.validator.validateFamilyPetsInCanil(pet.id_dono, data.id_canil);
         await this.validator.validateValorTotalPago(
             data.id_canil,
             data.data_entrada,
@@ -54,8 +61,14 @@ export class ReservaService {
         const dataEntrada = data.data_entrada ?? existingReserva.data_entrada;
         const dataSaida = data.data_saida ?? existingReserva.data_saida;
 
+        const petRepository = new PetRepository();
+        const pet = await petRepository.findById(petId);
+        if (!pet) {
+            throw new Error(`Pet with id ${petId} not found`);
+        }
+
         await this.validator.validateNoConflictingReservations(petId, dataEntrada, dataSaida, id);
-        await this.validator.validateFamilyPetsInCanil(petId, canilId);
+        await this.validator.validateFamilyPetsInCanil(pet.id_dono, canilId);
 
         let updateData: any = { ...data };
         if (data.id_canil || data.data_entrada || data.data_saida || data.valor_total_pago) {

@@ -1,6 +1,6 @@
-import { CanilRepository } from '../canil/canil.repository.js';
-import { ReservaRepository } from './reserva.repository.js';
 import { ConflictError } from '@/shared/errors/index.js';
+import type { CanilRepository } from '../canil/canil.repository.js';
+import type { ReservaRepository } from './reserva.repository.js';
 
 export class ReservaValidator {
     constructor(
@@ -43,7 +43,7 @@ export class ReservaValidator {
             throw new Error(`Kennel with id ${canilId} not found`);
         }
 
-        const days = Math.ceil((dataSaida.getTime() - dataEntrada.getTime()) / (1000 * 60 * 60 * 24));
+        const days = Math.ceil((dataSaida.getTime() - dataEntrada.getTime()) / (1000 * 60 * 60 * 24)) + 1;
         return days * Number(canil.valor_diario);
     }
 

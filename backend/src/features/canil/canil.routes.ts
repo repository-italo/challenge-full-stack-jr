@@ -2,8 +2,8 @@ import { type Express, Router } from 'express';
 import { createValidator } from '@/shared/middleware/index.js';
 import { CanilController } from './canil.controller.js';
 import { CanilRepository } from './canil.repository.js';
+import { canilParamsSchema, createCanilSchema, updateCanilSchema } from './canil.schemas.js';
 import { CanilService } from './canil.service.js';
-import { createCanilSchema, canilParamsSchema, updateCanilSchema } from './canil.schemas.js';
 
 export function createCanilRouter(app: Express): void {
     const router = Router();

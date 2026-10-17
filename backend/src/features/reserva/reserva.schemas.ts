@@ -6,7 +6,13 @@ export const createReservaSchema = z.object({
     data_entrada: z.coerce.date(),
     data_saida: z.coerce.date(),
     valor_total_pago: z.number().positive('Valor total pago é obrigatório'),
-});
+}).refine(
+    (data) => data.data_saida >= data.data_entrada,
+    {
+        message: 'Data de saída deve ser igual ou posterior à data de entrada',
+        path: ['data_saida'],
+    }
+);
 
 export const updateReservaSchema = z.object({
     id_canil: z.number().int().positive().optional(),
@@ -14,7 +20,18 @@ export const updateReservaSchema = z.object({
     data_entrada: z.coerce.date().optional(),
     data_saida: z.coerce.date().optional(),
     valor_total_pago: z.number().positive().optional(),
-});
+}).refine(
+    (data) => {
+        if (data.data_entrada && data.data_saida) {
+            return data.data_saida >= data.data_entrada;
+        }
+        return true;
+    },
+    {
+        message: 'Data de saída deve ser igual ou posterior à data de entrada',
+        path: ['data_saida'],
+    }
+);
 
 export const reservaParamsSchema = z.object({
     id: z.coerce.number().int().positive(),

@@ -1,5 +1,5 @@
-import { CanilRepository } from './canil.repository.js';
-import { CanilEntity } from './canil.entity.js';
+import type { CanilEntity } from './canil.entity.js';
+import type { CanilRepository } from './canil.repository.js';
 
 export class CanilService {
     constructor(private readonly canilRepository: CanilRepository) {}

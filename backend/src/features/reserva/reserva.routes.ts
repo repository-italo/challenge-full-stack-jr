@@ -1,17 +1,24 @@
 import { type Express, Router } from 'express';
 import { createValidator } from '@/shared/middleware/index.js';
+import { CanilRepository } from '../canil/canil.repository.js';
 import { ReservaController } from './reserva.controller.js';
 import { ReservaRepository } from './reserva.repository.js';
-import { CanilRepository } from '../canil/canil.repository.js';
-import { createReservaSchema, getReservasQuerySchema, reservaParamsSchema, updateReservaSchema } from './reserva.schemas.js';
+import {
+    createReservaSchema,
+    getReservasQuerySchema,
+    reservaParamsSchema,
+    updateReservaSchema,
+} from './reserva.schemas.js';
 import { ReservaService } from './reserva.service.js';
+import { PetRepository } from '../pet/pet.repository.js';
 
 export function createReservaRouter(app: Express): void {
     const router = Router();
 
     const reservaRepository = new ReservaRepository();
+    const petRepository = new PetRepository();
     const canilRepository = new CanilRepository();
-    const reservaService = new ReservaService(reservaRepository, canilRepository);
+    const reservaService = new ReservaService(petRepository, reservaRepository, canilRepository);
     const reservaController = new ReservaController(reservaService);
 
     router.get('/', createValidator(getReservasQuerySchema, 'query'), (req, res) => reservaController.getAll(req, res));
