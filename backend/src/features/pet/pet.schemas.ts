@@ -16,6 +16,11 @@ export const petParamsSchema = z.object({
     id: z.coerce.number().int().positive(),
 });
 
+export const getPetsQuerySchema = z.object({
+    dono_id: z.coerce.number().int().positive().optional(),
+});
+
 export type CreatePetRequest = z.infer<typeof createPetSchema>;
 export type UpdatePetRequest = z.infer<typeof updatePetSchema>;
 export type PetParams = z.infer<typeof petParamsSchema>;
+export type GetPetQuerySchema = z.infer<typeof getPetsQuerySchema>;

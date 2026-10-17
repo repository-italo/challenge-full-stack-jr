@@ -20,6 +20,13 @@ export const reservaParamsSchema = z.object({
     id: z.coerce.number().int().positive(),
 });
 
+export const getReservasQuerySchema = z.object({
+    id_canil: z.coerce.number().int().positive().optional(),
+    data_entrada: z.coerce.date().optional(),
+    data_saida: z.coerce.date().optional(),
+});
+
 export type CreateReservaRequest = z.infer<typeof createReservaSchema>;
 export type UpdateReservaRequest = z.infer<typeof updateReservaSchema>;
 export type ReservaParams = z.infer<typeof reservaParamsSchema>;
+export type GetReservasQuerySchema = z.infer<typeof getReservasQuerySchema>;

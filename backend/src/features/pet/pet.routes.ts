@@ -2,7 +2,7 @@ import { type Express, Router } from 'express';
 import { createValidator } from '@/shared/middleware/index.js';
 import { PetController } from './pet.controller.js';
 import { PetRepository } from './pet.repository.js';
-import { createPetSchema, petParamsSchema, updatePetSchema } from './pet.schemas.js';
+import { createPetSchema, getPetsQuerySchema, petParamsSchema, updatePetSchema } from './pet.schemas.js';
 import { PetService } from './pet.service.js';
 
 export function createPetRouter(app: Express): void {
@@ -12,7 +12,7 @@ export function createPetRouter(app: Express): void {
     const petService = new PetService(petRepository);
     const petController = new PetController(petService);
 
-    router.get('/', (req, res) => petController.getAll(req, res));
+    router.get('/', createValidator(getPetsQuerySchema, 'query'), (req, res) => petController.getAll(req, res));
     router.get('/:id', createValidator(petParamsSchema, 'params'), (req, res) => petController.getById(req, res));
     router.post('/', createValidator(createPetSchema, 'body'), (req, res) => petController.create(req, res));
     router.put(

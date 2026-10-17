@@ -1,6 +1,7 @@
 import { getCachedModels } from '@/integrations/database/index.js';
 import type { Pet } from '@/integrations/database/models/pet.js';
 import { type PetData, PetEntity } from './pet.entity.js';
+import type { GetPetQuerySchema } from './pet.schemas.js';
 
 export class PetRepository {
     private Pet: typeof Pet;
@@ -9,8 +10,16 @@ export class PetRepository {
         ({ Pet: this.Pet } = getCachedModels());
     }
 
-    async findAll(): Promise<PetEntity[]> {
-        const pets = await this.Pet.findAll();
+    async findAll(filters?: GetPetQuerySchema): Promise<PetEntity[]> {
+        const where: any = {};
+
+        if (filters?.dono_id) {
+            where.id_dono = filters.dono_id;
+        }
+
+        const pets = await this.Pet.findAll({
+            where,
+        });
         return pets.map((pet) => PetEntity.restore(pet.toJSON() as PetData));
     }
 

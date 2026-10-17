@@ -1,11 +1,9 @@
-import { PetRepository } from '../pet/pet.repository.js';
 import { CanilRepository } from '../canil/canil.repository.js';
 import { ReservaRepository } from './reserva.repository.js';
 import { ConflictError } from '@/shared/errors/index.js';
 
 export class ReservaValidator {
     constructor(
-        private readonly petRepository: PetRepository,
         private readonly canilRepository: CanilRepository,
         private readonly reservaRepository: ReservaRepository,
     ) {}

@@ -1,14 +1,15 @@
 import type { Request, Response } from 'express';
 import { NotFoundError } from '@/shared/errors/index.js';
 import type { RemoveUndefined } from '@/shared/types/index.js';
-import type { CreatePetRequest, PetParams, UpdatePetRequest } from './pet.schemas.js';
+import type { CreatePetRequest, GetPetQuerySchema, PetParams, UpdatePetRequest } from './pet.schemas.js';
 import type { PetService } from './pet.service.js';
 
 export class PetController {
     constructor(private readonly petService: PetService) {}
 
     async getAll(_req: Request, res: Response): Promise<void> {
-        const pets = await this.petService.getAllPets();
+        const filters = res.locals.query as GetPetQuerySchema;
+        const pets = await this.petService.getAllPets(filters);
         res.status(200).json(
             pets.map((pet) => ({
                 id: pet.id,

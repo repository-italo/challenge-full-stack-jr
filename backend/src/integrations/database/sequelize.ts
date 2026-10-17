@@ -7,6 +7,7 @@ const envVarSchema = z.object({
     port: z.coerce.number(),
     username: z.string(),
     password: z.string(),
+    database: z.string(),
 });
 
 let connection: Sequelize | null = null;
@@ -17,10 +18,11 @@ export async function initConnection(): Promise<Sequelize> {
     }
 
     const credentials = envVarSchema.parse({
-        host: process.env.DATABASE_HOST,
-        port: process.env.DATABASE_PORT,
-        username: process.env.DATABASE_USERNAME,
-        password: process.env.DATABASE_PASSWORD,
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        username: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
     });
 
     connection = new Sequelize({
@@ -29,7 +31,7 @@ export async function initConnection(): Promise<Sequelize> {
         port: credentials.port,
         username: credentials.username,
         password: credentials.password,
-        database: 'database_petzin',
+        database: credentials.database,
     });
 
     await connection.authenticate();

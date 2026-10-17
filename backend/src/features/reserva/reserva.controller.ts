@@ -1,14 +1,15 @@
 import type { Request, Response } from 'express';
 import { NotFoundError } from '@/shared/errors/index.js';
 import type { RemoveUndefined } from '@/shared/types/index.js';
-import type { CreateReservaRequest, ReservaParams, UpdateReservaRequest } from './reserva.schemas.js';
+import type { CreateReservaRequest, GetReservasQuerySchema, ReservaParams, UpdateReservaRequest } from './reserva.schemas.js';
 import type { ReservaService } from './reserva.service.js';
 
 export class ReservaController {
     constructor(private readonly reservaService: ReservaService) {}
 
     async getAll(_req: Request, res: Response): Promise<void> {
-        const reservas = await this.reservaService.getAllReservas();
+        const filters = res.locals.query as GetReservasQuerySchema;
+        const reservas = await this.reservaService.getAllReservas(filters);
         res.status(200).json(
             reservas.map((reserva) => ({
                 id: reserva.id,

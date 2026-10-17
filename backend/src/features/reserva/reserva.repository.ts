@@ -1,6 +1,8 @@
 import { getCachedModels } from '@/integrations/database/index.js';
 import type { Reserva } from '@/integrations/database/models/reserva.js';
 import { type ReservaData, ReservaEntity } from './reserva.entity.js';
+import type { GetReservasQuerySchema } from './reserva.schemas.js';
+import { Op } from 'sequelize';
 
 export class ReservaRepository {
     private Reserva: typeof Reserva;
@@ -9,8 +11,23 @@ export class ReservaRepository {
         ({ Reserva: this.Reserva } = getCachedModels());
     }
 
-    async findAll(): Promise<ReservaEntity[]> {
-        const reservas = await this.Reserva.findAll();
+    async findAll(filters?: GetReservasQuerySchema): Promise<ReservaEntity[]> {
+        const where: any = {};
+
+        if (filters?.id_canil) {
+            where.id_canil = filters.id_canil;
+        }
+
+        if (filters?.data_entrada && filters?.data_saida) {
+            where.data_entrada = { [Op.gte]: filters.data_entrada };
+            where.data_saida = { [Op.lte]: filters.data_saida };
+        } else if (filters?.data_entrada) {
+            where.data_entrada = { [Op.gte]: filters.data_entrada };
+        } else if (filters?.data_saida) {
+            where.data_saida = { [Op.lte]: filters.data_saida };
+        }
+
+        const reservas = await this.Reserva.findAll({ where });
         return reservas.map((reserva) => ReservaEntity.restore(reserva.toJSON() as ReservaData));
     }
 

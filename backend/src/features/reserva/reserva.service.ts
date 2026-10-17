@@ -3,6 +3,7 @@ import { CanilRepository } from '../canil/canil.repository.js';
 import type { ReservaEntity } from './reserva.entity.js';
 import type { ReservaRepository } from './reserva.repository.js';
 import { ReservaValidator } from './reserva.validator.js';
+import type { GetReservasQuerySchema } from './reserva.schemas.js';
 
 export class ReservaService {
     private validator: ReservaValidator;
@@ -11,11 +12,11 @@ export class ReservaService {
         private readonly reservaRepository: ReservaRepository,
         private readonly canilRepository: CanilRepository,
     ) {
-        this.validator = new ReservaValidator(new PetRepository(), canilRepository, reservaRepository);
+        this.validator = new ReservaValidator(canilRepository, reservaRepository);
     }
 
-    async getAllReservas(): Promise<ReservaEntity[]> {
-        return this.reservaRepository.findAll();
+    async getAllReservas(filters?: GetReservasQuerySchema): Promise<ReservaEntity[]> {
+        return this.reservaRepository.findAll(filters);
     }
 
     async getReservaById(id: number): Promise<ReservaEntity | null> {
