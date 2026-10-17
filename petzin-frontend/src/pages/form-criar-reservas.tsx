@@ -101,6 +101,12 @@ export function FormReservas() {
         setValue('id_pet', Number(id));
     };
 
+    const getMinDate = (): string => {
+        const today = new Date();
+        today.setDate(today.getDate() + 1);
+        return today.toISOString().split('T')[0];
+    };
+
     const onCheckInChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setDataEntrada(value);
@@ -141,17 +147,37 @@ export function FormReservas() {
     };
 
     const onSubmit = (data: CreateReservaInput) => {
-        createReserva(data, {
-            onSuccess: () => {
-                toast.success('✅ Reserva criada com sucesso!');
-                setTimeout(() => {
-                    window.history.back();
-                }, 1500);
+        createReserva(
+            {
+                ...data,
+                data_entrada: new Date(data.data_entrada + 'T00:00:00').toISOString(),
+                data_saida: new Date(data.data_saida + 'T00:00:00').toISOString(),
             },
-            onError: (error) => {
-                toast.error(`❌ Erro ao criar reserva: ${error.message}`);
+            {
+                onSuccess: () => {
+                    toast.success('✅ Reserva criada com sucesso!');
+                    setTimeout(() => {
+                        window.history.back();
+                    }, 1500);
+                },
+                onError: (error: any) => {
+                    const errorMessage: string =
+                        error?.response?.data?.message || error?.message || 'Erro ao criar reserva';
+
+                    let displayMessage: string = errorMessage;
+                    if (errorMessage.includes('conflitando')) {
+                        displayMessage = '❌ Este pet já possui uma reserva no período selecionado';
+                    } else if (errorMessage.includes('cachorros no canil')) {
+                        displayMessage =
+                            '❌ O proprietário já tem 2 cachorros reservados neste canil. Máximo de 2 animais por proprietário por canil';
+                    } else {
+                        displayMessage = `❌ ${errorMessage}`;
+                    }
+
+                    toast.error(displayMessage);
+                },
             },
-        });
+        );
     };
 
     return (
@@ -227,7 +253,13 @@ export function FormReservas() {
                         {/* Data de Entrada */}
                         <div className="space-y-2 mb-6">
                             <Label htmlFor="entrada">Data de Entrada *</Label>
-                            <Input id="entrada" type="date" {...register('data_entrada')} onChange={onCheckInChange} />
+                            <Input
+                                id="entrada"
+                                type="date"
+                                min={getMinDate()}
+                                {...register('data_entrada')}
+                                onChange={onCheckInChange}
+                            />
                             {errors.data_entrada && (
                                 <p className="text-sm text-destructive">{errors.data_entrada.message}</p>
                             )}
@@ -236,7 +268,13 @@ export function FormReservas() {
                         {/* Data de Saída */}
                         <div className="space-y-2 mb-6">
                             <Label htmlFor="saida">Data de Saída *</Label>
-                            <Input id="saida" type="date" {...register('data_saida')} onChange={onCheckOutChange} />
+                            <Input
+                                id="saida"
+                                type="date"
+                                min={getMinDate()}
+                                {...register('data_saida')}
+                                onChange={onCheckOutChange}
+                            />
                             {errors.data_saida && (
                                 <p className="text-sm text-destructive">{errors.data_saida.message}</p>
                             )}
@@ -293,12 +331,7 @@ export function FormReservas() {
                             >
                                 {isPending ? 'Criando...' : 'Criar Reserva'}
                             </Button>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={handleReset}
-                                className="flex-1"
-                            >
+                            <Button type="button" variant="outline" onClick={handleReset} className="flex-1">
                                 Limpar
                             </Button>
                             <Button

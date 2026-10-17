@@ -1,4 +1,4 @@
-import { ConflictError } from '@/shared/errors/index.js';
+import { ConflictError, NotFoundError } from '@/shared/errors/index.js';
 import type { CanilRepository } from '../canil/canil.repository.js';
 import type { ReservaRepository } from './reserva.repository.js';
 
@@ -24,23 +24,35 @@ export class ReservaValidator {
             const hasConflict = dataEntrada < reserva.data_saida && dataSaida > reserva.data_entrada;
 
             if (hasConflict) {
-                throw new Error(`Pet with id ${petId} has a conflicting reservation during this period`);
+                throw new ConflictError(`Esse pet tem uma reserva conflitando durante esse período`);
             }
         }
     }
 
-    async validateFamilyPetsInCanil(donoId: number, canilId: number): Promise<void> {
-        const activeReservas = await this.reservaRepository.findActiveByCanilAndDono(canilId, donoId);
+    async validateFamilyPetsInCanil(
+        donoId: number,
+        canilId: number,
+        dataEntrada: Date,
+        dataSaida: Date,
+    ): Promise<void> {
+        const overlappingReservas = await this.reservaRepository.findOverlappingByCanilAndDonoInDateRange(
+            canilId,
+            donoId,
+            dataEntrada,
+            dataSaida,
+        );
 
-        if (activeReservas.length >= 2) {
-            throw new Error(`Owner already has 2 dogs in kennel ${canilId}`);
+        const uniquePets = new Set(overlappingReservas.map((r) => r.id_pet));
+
+        if (uniquePets.size >= 2) {
+            throw new ConflictError(`Dono já tem 2 cachorros no canil ${canilId}`);
         }
     }
 
     async calculateValorTotalPago(canilId: number, dataEntrada: Date, dataSaida: Date): Promise<number> {
         const canil = await this.canilRepository.findById(canilId);
         if (!canil) {
-            throw new Error(`Kennel with id ${canilId} not found`);
+            throw new NotFoundError(`Canil com id ${canilId} não encontrado`);
         }
 
         const days = Math.ceil((dataSaida.getTime() - dataEntrada.getTime()) / (1000 * 60 * 60 * 24)) + 1;

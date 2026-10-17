@@ -51,6 +51,26 @@ export class ReservaRepository {
         return reservas.map((reserva) => ReservaEntity.restore(reserva.toJSON() as ReservaData));
     }
 
+    async findOverlappingByCanilAndDonoInDateRange(
+        canilId: number,
+        donoId: number,
+        dataEntrada: Date,
+        dataSaida: Date,
+    ): Promise<ReservaEntity[]> {
+        const { Pet } = getCachedModels();
+        const reservas = await this.Reserva.findAll({
+            where: {
+                id_canil: canilId,
+                [Op.and]: [
+                    { data_entrada: { [Op.lt]: dataSaida } },
+                    { data_saida: { [Op.gt]: dataEntrada } },
+                ],
+            },
+            include: [{ model: Pet, as: 'pet', where: { id_dono: donoId } }],
+        });
+        return reservas.map((reserva) => ReservaEntity.restore(reserva.toJSON() as ReservaData));
+    }
+
     async create(data: {
         id_canil: number;
         id_pet: number;

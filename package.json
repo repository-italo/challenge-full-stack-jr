@@ -6,7 +6,11 @@
     "scripts": {
         "check": "biome check .",
         "check:fix": "biome check --write .",
-        "ci": "biome ci ."
+        "ci": "biome ci .",
+        "db:migrate": "cd database && npx sequelize-cli db:migrate",
+        "db:migrate:undo": "cd database && npx sequelize-cli db:migrate:undo",
+        "db:migrate:undo:all": "cd database && npx sequelize-cli db:migrate:undo:all",
+        "db:seed:all": "cd database && npx sequelize-cli db:seed:all"
     },
     "repository": {
         "type": "git",

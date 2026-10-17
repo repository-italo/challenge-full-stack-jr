@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { useDonosWithPets } from '@/hooks';
 import { useDeleteDono } from '@/hooks/dono.hooks';
+import { useDeletePet } from '@/hooks/pet.hooks';
+import type { Pet } from '@/types/pet';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/components/ui/card';
 import { Button } from '@/components/components/ui/button';
 import { CreateDonoDialog } from '@/components/dialogs/create-dono-dialog';
 import { CreatePetDialog } from '@/components/dialogs/create-pet-dialog';
 import { EditDonoDialog } from '@/components/dialogs/edit-dono-dialog';
+import { EditPetDialog } from '@/components/dialogs/edit-pet-dialog';
 import { toast } from 'sonner';
 
 export function Clientes() {
@@ -13,8 +16,11 @@ export function Clientes() {
     const [openCreateDono, setOpenCreateDono] = useState(false);
     const [openCreatePet, setOpenCreatePet] = useState(false);
     const [openEditDono, setOpenEditDono] = useState(false);
+    const [openEditPet, setOpenEditPet] = useState(false);
     const [selectedDonoForEdit, setSelectedDonoForEdit] = useState<any>(null);
+    const [selectedPetForEdit, setSelectedPetForEdit] = useState<Pet | null>(null);
     const { mutate: deleteDono } = useDeleteDono();
+    const { mutate: deletePet } = useDeletePet();
 
     const handleEditClick = (dono: any) => {
         setSelectedDonoForEdit(dono);
@@ -30,6 +36,25 @@ export function Clientes() {
             },
             onError: (error: any) => {
                 toast.error(`❌ Erro ao deletar: ${error.message}`);
+            },
+        });
+    };
+
+    const handleEditPet = (pet: Pet) => {
+        setSelectedPetForEdit(pet);
+        setOpenEditPet(true);
+    };
+
+    const handleDeletePet = (petName: string, petId: number) => {
+        if (!confirm(`Tem certeza que deseja deletar o pet "${petName}"?`)) return;
+        deletePet(petId, {
+            onSuccess: () => {
+                toast.success('✅ Pet deletado com sucesso!');
+                refetch();
+            },
+            onError: (error: any) => {
+                const message = error?.response?.data?.message || error?.message || 'Erro ao deletar pet';
+                toast.error(`❌ ${message}`);
             },
         });
     };
@@ -84,10 +109,32 @@ export function Clientes() {
                                             {dono.pets.map((pet) => (
                                                 <div
                                                     key={pet.id}
-                                                    className="p-3 bg-gray-50 rounded-md border border-gray-200 hover:bg-gray-100 transition-colors"
+                                                    className="p-3 bg-gray-50 rounded-md border border-gray-200 hover:bg-gray-100 transition-colors flex justify-between items-start"
                                                 >
-                                                    <p className="font-medium text-gray-900">{pet.nome}</p>
-                                                    <p className="text-sm text-gray-600">{pet.raca}</p>
+                                                    <div>
+                                                        <p className="font-medium text-gray-900">{pet.nome}</p>
+                                                        <p className="text-sm text-gray-600">{pet.raca}</p>
+                                                    </div>
+                                                    <div className="flex gap-1">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => handleEditPet(pet)}
+                                                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 cursor-pointer"
+                                                            title="Editar pet"
+                                                        >
+                                                            ✏️
+                                                        </Button>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => handleDeletePet(pet.nome, pet.id)}
+                                                            className="text-red-600 hover:text-red-700 hover:bg-red-50 cursor-pointer"
+                                                            title="Deletar pet"
+                                                        >
+                                                            ✕
+                                                        </Button>
+                                                    </div>
                                                 </div>
                                             ))}
                                         </div>
@@ -126,6 +173,15 @@ export function Clientes() {
                     onOpenChange={setOpenEditDono}
                     onSuccess={refetch}
                     dono={selectedDonoForEdit}
+                />
+            )}
+
+            {selectedPetForEdit && (
+                <EditPetDialog
+                    open={openEditPet}
+                    onOpenChange={setOpenEditPet}
+                    onSuccess={refetch}
+                    pet={selectedPetForEdit}
                 />
             )}
         </div>
